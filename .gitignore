@@ -35,3 +35,5 @@
 cmake-build-*/
 .idea/
 .DS_Store
+
+*.make

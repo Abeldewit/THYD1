@@ -16,47 +16,39 @@ bool HLexer::remove_comment( Token& token )
         bool end_of_comment = false;
         bool star_comment = false;
 
-        token.text.push_back(c_);
+        //token.text.push_back(c_);
         c_next();
         remove_whitespaces();
         if ( c_ == '*') { star_comment = true; }
 
         while (!c_eoi() && !end_of_comment) {
-            token.text.push_back(c_);
+            //token.text.push_back(c_);
             c_next();
             remove_whitespaces();
             if ( star_comment ) {
                 if ( c_ == '*') {
-                    token.text.push_back(c_);
+                    //token.text.push_back(c_);
                     c_next();
                     if ( c_ == '}') {
                         end_of_comment = true;
+                        c_next();
                         break;
                     }
                 }
             } else {
                 if (c_ == '}') {
                     end_of_comment = true;
+                    c_next();
                     break;
                 }
             }
         }
-        return true;
+        if (end_of_comment) {
+            return true;
+        } else {
+            return false;
+        }
     }
-//    if ( c_ == '{' ) {
-//        c_next();
-//        // With a *
-//        if( c_ == '*') {
-//            c_next();
-//            for ( ; c_ != '*'; c_next());
-//            c_next();
-//            return true;
-//        } else {
-//            for( ; c_ != '}'; c_next());
-//            c_next();
-//            return true;
-//        }
-//    } else { return false; }
 }
 
 
