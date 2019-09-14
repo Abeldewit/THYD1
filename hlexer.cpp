@@ -49,6 +49,9 @@ bool HLexer::remove_comment( Token& token )
             return false;
         }
     }
+
+    // TODO: CHECK.. warning: control reaches the end of a non-void function
+    return false;
 }
 
 
@@ -79,9 +82,16 @@ void HLexer::process_string( Token& token )
 // Process identifier names.
 void HLexer::process_identifier( Token& token )
 {
-    // NOTE: Add your code here (instead of the provided c_next()).
-    c_next();
+    if(isalpha(c_) || c_ == '_') {
+        token.text.push_back(c_);
+        token.name = LNG::TN::t_identifier;
+        c_next();
 
+        while(!c_eoi() && (isalnum(c_) || c_ == '_')) {
+            token.text.push_back(c_);
+            c_next();
+        }
+    }
 }
 
 
@@ -104,6 +114,8 @@ void HLexer::process_number( Token& token )
 
 void HLexer::get( Token& token )
 {
+    // acc. to Yngvi this next line stops repeated printout when lexer is incomplete
+    token.name = LNG::TN::t_unknown;
     token.text.clear();
     token.loc = loc_;
 
@@ -119,8 +131,6 @@ void HLexer::get( Token& token )
 
     // Process a token.
     switch ( c_ ) {
-        case ';': set( token, LNG::TN::t_semicolon );
-            break;
         case ':':
             if (is_.peek() == '=') {
                 token.text = ":=";
@@ -131,14 +141,75 @@ void HLexer::get( Token& token )
                 set( token, LNG::TN::t_colon );
             }
             break;
-
-         // NOTE: Add code here for all the remaining cases.
+        case '=': set( token, LNG::TN::t_eq );
+            break;
+        case '/': set( token, LNG::TN::t_divide );
+            break;
+        case '>':
+            if (is_.peek() == '=') {
+                token.text =  ">=";
+                token.name = LNG::TN::t_gteq;
+                c_next();
+                c_next();
+            }
+            else {
+                set(token, LNG::TN::t_gt);
+            }
+            break;
+        case '<':
+            if (is_.peek() == '=') {
+                token.text =  "<=";
+                token.name = LNG::TN::t_lteq;
+                c_next();
+                c_next();
+            }
+            else if(is_.peek() == '>') {
+                token.text =  "<>";
+                token.name = LNG::TN::t_neq;
+                c_next();
+                c_next();
+            }
+            else {
+                set(token, LNG::TN::t_lt);
+            }
+            break;
+        case '-': set( token, LNG::TN::t_minus );
+            break;
+        case '*': set( token, LNG::TN::t_multiply );
+            break;
+        case '+': set( token, LNG::TN::t_plus );
+            break;
+        case '^': set( token, LNG::TN::t_caret );
+            break;
+        case ',': set( token, LNG::TN::t_comma );
+            break;
+        case '.':
+            if(is_.peek() == '.') {
+                token.text = "..";
+                token.name = LNG::TN::t_subrange;
+                c_next();
+                c_next();
+            }
+                set( token, LNG::TN::t_dot );
+            break;
+        case '[': set( token, LNG::TN::t_lbracket );
+            break;
+        case '(': set( token, LNG::TN::t_lparenthesis );
+            break;
+        case ']': set( token, LNG::TN::t_rbracket );
+            break;
+        case ')': set( token, LNG::TN::t_rparenthesis );
+            break;
+        case ';': set( token, LNG::TN::t_semicolon );
+            break;
 
         default:
             if ( c_ == '\'' )        { process_string( token ); }
             else if ( digit( c_ ) )  { process_number( token ); }
             else if ( letter( c_ ) ) {
                 process_identifier( token );
+                // the find function returns an iterator to a matching key in the map
+                // if not it is pointing to the map's end, as checked in the if thereafter.
                 auto it = LNG::ReservedWordToTokenName.find( Common::to_lower( token.text ) );
                 if ( it != LNG::ReservedWordToTokenName.end() ) {
                     token.name = it->second;
