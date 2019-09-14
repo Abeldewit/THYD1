@@ -5,6 +5,7 @@
 #include<string>
 #include "common.h"
 #include "language.h"
+#include <cassert>
 
 class Lexer {
 public:
