@@ -82,11 +82,13 @@ void HLexer::process_string( Token& token )
 // Process identifier names.
 void HLexer::process_identifier( Token& token )
 {
+    // actually this check below has already been made before calling this function so strictly it is not needed.
     if(isalpha(c_) || c_ == '_') {
         token.text.push_back(c_);
         token.name = LNG::TN::t_identifier;
         c_next();
 
+        // after the && we could just call the letter_or_digit() helper of current class
         while(!c_eoi() && (isalnum(c_) || c_ == '_')) {
             token.text.push_back(c_);
             c_next();
@@ -117,11 +119,15 @@ void HLexer::get( Token& token )
     // acc. to Yngvi this next line stops repeated printout when lexer is incomplete
     token.name = LNG::TN::t_unknown;
     token.text.clear();
-    token.loc = loc_;
 
     // NOTE: Add code to remove comments and white-spaces.
     remove_whitespaces();
     remove_comment(token);
+
+    // the location info. can not be read from the lexer class to the token
+    // until after witespaces and comments have been processed
+    token.loc = loc_;
+
 
     // Return EOI if at end of input
     if ( c_eoi() ) {
