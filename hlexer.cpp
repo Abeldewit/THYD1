@@ -82,17 +82,15 @@ void HLexer::process_string( Token& token )
 // Process identifier names.
 void HLexer::process_identifier( Token& token )
 {
-    // actually this check below has already been made before calling this function so strictly it is not needed.
-    if(isalpha(c_) || c_ == '_') {
-        token.text.push_back(c_);
-        token.name = LNG::TN::t_identifier;
-        c_next();
 
-        // after the && we could just call the letter_or_digit() helper of current class
-        while(!c_eoi() && (isalnum(c_) || c_ == '_')) {
-            token.text.push_back(c_);
-            c_next();
-        }
+    token.text.push_back(c_);
+    token.name = LNG::TN::t_identifier;
+    c_next();
+
+    // after the && we could just call the letter_or_digit() helper of current class
+    while(!c_eoi() && letter_or_digit(c_)) {
+        token.text.push_back(c_);
+        c_next();
     }
 }
 
