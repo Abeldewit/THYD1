@@ -2,6 +2,7 @@
 %option c++
 %option noyywrap
 %option yylineno
+%option caseless
 %{
 #include "language.h"
 %}
