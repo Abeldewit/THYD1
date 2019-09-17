@@ -12,8 +12,10 @@
 ws [ \t\r\n]
 digit [0-9]
 alpha [a-zA-Z]
-
+%x STAR_COMMENT
 %%
+
+
 
 {ws}+             		/* do nothing */
 ":="		            { return LNG::TokenName::t_assign; }
@@ -50,11 +52,13 @@ alpha [a-zA-Z]
 "'"[^']*$               { throw Lexer::LexerException(Common::Location{0, 0}, yytext ); }
 
 "{"(?:[^\}])*"}"		/*  {} style of a comment */
+"{"[^\}]*               { throw Lexer::LexerException(Common::Location{0, 0}, "non-ending {} comment!" ); }
 
-"(*"[^("*)"]*"*)"        /*  (* *) style of a comment */
-
-"{"[^\}]*               { throw Lexer::LexerException(Common::Location{0, 0}, "non-ending comment!" ); }
-"(*"[^(\*\))]*          { throw Lexer::LexerException(Common::Location{0, 0}, "non-ending comment!" ); }
+"(*"                    { BEGIN(STAR_COMMENT); }
+<STAR_COMMENT>"*)"      { BEGIN(INITIAL); }
+<STAR_COMMENT>.         { }
+<STAR_COMMENT>\n        { }
+<STAR_COMMENT><<EOF>>   { throw Lexer::LexerException(Common::Location{0, 0}, "non-ending (**) comment!" ); }
 
 .               		{ return LNG::TokenName::t_unknown; }
 
