@@ -1,0 +1,3 @@
+/mnt/c/Users/Sigurjon/CLionProjects/THYD1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/Sigurjon/CLionProjects/THYD1/cmake-build-debug/CMakeFiles/TPLexer.dir
+/mnt/c/Users/Sigurjon/CLionProjects/THYD1/cmake-build-debug/CMakeFiles/edit_cache.dir

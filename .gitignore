@@ -32,7 +32,6 @@
 *.app
 
 # CLion ignore
-cmake-build-*/
 .idea/
 .DS_Store
 
