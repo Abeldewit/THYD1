@@ -10,9 +10,9 @@ bool HLexer::remove_whitespaces()
 }
 
 
-bool HLexer::remove_comment( Token& token )
+bool HLexer::remove_comment( Token& token ) //TODO do we need this parameter... never used!
 {
-    if(c_ == '{') {
+    /*if(c_ == '{') {
         bool end_of_comment = false;
         bool star_comment = false;
 
@@ -51,7 +51,57 @@ bool HLexer::remove_comment( Token& token )
     }
 
     // TODO: CHECK.. warning: control reaches the end of a non-void function
-    return false;
+    return false;*/
+
+    bool hasEnded = false;
+
+    // handle the two comment types separately but mutual end of function an exception of needed.
+    if(c_ == '{') {
+
+        while (!c_eoi()) {
+            c_next();
+
+            if (c_ == '}') {
+                hasEnded = true;
+                break;
+            }
+        }
+    }
+    else if (c_ == '(') {
+
+        if(c_peek() != '*') {
+            // not a comment, just (
+            return false;
+        }
+
+        // we have an * ==> consume two chars
+        c_next();
+        c_next();
+
+        // inside a (*  *) comment = look for closing chars
+        while (!c_eoi()) {
+
+            if (c_ == '*' && c_peek() == '}') {
+                c_next();
+                hasEnded = true;
+                break;
+            }
+            c_next();
+        }
+
+    }
+    else {
+        // not even a comment in the first place
+        return false;
+    }
+
+    if(hasEnded) {
+        c_next();
+        return true;
+    }
+    else {
+        throw LexerException( token.loc, "Unexpected end of comment" );
+    }
 }
 
 
@@ -66,6 +116,11 @@ void HLexer::process_string( Token& token )
         c_next();
         if (c_ == '\'') {
             has_ended = true;
+            break;
+        }
+
+        // strings in TP can't span multiple lines
+        if(c_ == '\n') {
             break;
         }
     }
