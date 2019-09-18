@@ -36,3 +36,5 @@
 .DS_Store
 
 *.make
+
+cmake-build-debug/
