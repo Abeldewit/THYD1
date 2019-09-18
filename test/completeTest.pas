@@ -1,9 +1,11 @@
 'This is a string, in Turbo Pascal it must be written on a single line'
 'if it is not, what should a compiler do then?'
 'well it throws an error'
+' ok for hlexr :)'
 
 'now testing what the lexer will to with a string'
 'that spans multiple lines, which is illegal in TURBO pascal'
+' ok for hlexr :)'
 
 {this is a regular well formed comment....}
 
@@ -24,6 +26,7 @@ hell yeaahhh *)
 here are somw words I want to grab between comments
 
 (* now testing a single star in the comment but newer properly ending it => should throw an exception *)
+(* ok for hlexr :) *)
 
 'integers of various formats'
 -1
@@ -34,20 +37,23 @@ here are somw words I want to grab between comments
 Reals
 0.0
 100E1
-99.99
+99.12345
 -99.100E-089
 -248E8
 499E+45
 -45.43e-23
 
-'this should be unknown add to the specs'
+'this should not be returned as an real be unknown add to the specs'
 .45e2
+' and not this '
+0.e3
+
 
 'some identifiers'
 var1
 _ble99
 
-'but this is illegal'
+'but this is illegal as an identifier'
 9_ab
 
 'operators and punctation'
@@ -61,8 +67,11 @@ _ble99
 10 < 11
 13 > 12
 14 >= 14
-15 == 15
+15 = 15
 a := 0
+
+1..10
+
 ;
 :
 ..
@@ -71,7 +80,7 @@ a := 0
 ()
 []
 
-'keysword'
+'keyswords'
 absolute
 and
 array

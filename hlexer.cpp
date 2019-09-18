@@ -103,7 +103,6 @@ void HLexer::process_identifier( Token& token )
     token.name = LNG::TN::t_identifier;
     c_next();
 
-    // after the && we could just call the letter_or_digit() helper of current class
     while(!c_eoi() && letter_or_digit(c_)) {
         token.text.push_back(c_);
         c_next();
@@ -142,10 +141,11 @@ void HLexer::process_number( Token& token )
             process_digits(token);
         } else {
             // if we detected the period but there is no digit after it...
-            token.text.push_back(c_);
-            c_next();
+            // lets sey its is an int... because changes are that a range will follow
+            //token.text.push_back(c_);
+            //c_next();
             // we don't know what it is
-            token.name = LNG::TN::t_unknown;
+            //token.name = LNG::TN::t_unknown;
             return;
         }
     }
@@ -251,7 +251,9 @@ void HLexer::get( Token& token )
                 c_next();
                 c_next();
             }
-                set( token, LNG::TN::t_dot );
+            else {
+                set(token, LNG::TN::t_dot);
+            }
             break;
         case '[': set( token, LNG::TN::t_lbracket );
             break;
