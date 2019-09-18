@@ -176,9 +176,14 @@ void HLexer::get( Token& token )
     token.text.clear();
 
     // NOTE: Add code to remove comments and white-spaces.
-    remove_whitespaces();
-    remove_comment(token);
+    bool possiblyWhitespece = true;
+    bool possiblyComments = true;
 
+    while(possiblyWhitespece || possiblyComments) {
+        possiblyWhitespece = remove_whitespaces();
+        possiblyComments = remove_comment(token);
+    }
+    
     // the location info. can not be read from the lexer class to the token
     // until after witespaces and comments have been processed
     token.loc = loc_;
