@@ -48,15 +48,13 @@ alpha [a-zA-Z]
                               return LNG::TokenName::t_identifier;
                         }}
 
-
-
-
 "'".*"'"                { return LNG::TokenName::t_string_l; }
 
 "'"[^']*$               { throw Lexer::LexerException(Common::Location{0, 0}, yytext ); }
 
-{digit}+("."{digit}+)(("e"|"E")("-"|"+")?{digit}+)?	{ return LNG::TokenName::t_real; }
-{digit}+("."{digit}+)?(("e"|"E")("-"|"+")?{digit}+)	{ return LNG::TokenName::t_real; }
+"."{digit}+.*			{ return LNG::TokenName::t_unknown;		}
+{digit}+("."{digit}+)(("e"|"E")("-"|"+")?{digit}+)?			{ return LNG::TokenName::t_real; }
+{digit}+("."{digit}+)?(("e"|"E")("-"|"+")?{digit}+)			{ return LNG::TokenName::t_real; }
 {digit}+				{ return LNG::TokenName::t_integer; }
 "{"(?:[^\}])*"}"		/*  {} style of a comment */
 "{"[^\}]*               { throw Lexer::LexerException(Common::Location{0, 0}, "non-ending {} comment!" ); }
