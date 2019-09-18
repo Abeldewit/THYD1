@@ -12,46 +12,6 @@ bool HLexer::remove_whitespaces()
 
 bool HLexer::remove_comment( Token& token ) //TODO do we need this parameter... never used!
 {
-    /*if(c_ == '{') {
-        bool end_of_comment = false;
-        bool star_comment = false;
-
-        //token.text.push_back(c_);
-        c_next();
-        remove_whitespaces();
-        if ( c_ == '*') { star_comment = true; }
-
-        while (!c_eoi() && !end_of_comment) {
-            //token.text.push_back(c_);
-            c_next();
-            remove_whitespaces();
-            if ( star_comment ) {
-                if ( c_ == '*') {
-                    //token.text.push_back(c_);
-                    c_next();
-                    if ( c_ == '}') {
-                        end_of_comment = true;
-                        c_next();
-                        break;
-                    }
-                }
-            } else {
-                if (c_ == '}') {
-                    end_of_comment = true;
-                    c_next();
-                    break;
-                }
-            }
-        }
-        if (end_of_comment) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // TODO: CHECK.. warning: control reaches the end of a non-void function
-    return false;*/
 
     bool hasEnded = false;
 
@@ -66,8 +26,7 @@ bool HLexer::remove_comment( Token& token ) //TODO do we need this parameter... 
                 break;
             }
         }
-    }
-    else if (c_ == '(') {
+    } else if (c_ == '(') {
 
         if(c_peek() != '*') {
             // not a comment, just (
@@ -81,10 +40,12 @@ bool HLexer::remove_comment( Token& token ) //TODO do we need this parameter... 
         // inside a (*  *) comment = look for closing chars
         while (!c_eoi()) {
 
-            if (c_ == '*' && c_peek() == '}') {
-                c_next();
-                hasEnded = true;
-                break;
+            if (c_ == '*') {
+                if ( c_peek() == ')') {
+                    c_next();
+                    hasEnded = true;
+                    break;
+                }
             }
             c_next();
         }
@@ -153,16 +114,57 @@ void HLexer::process_identifier( Token& token )
 // A sequence of numbers/digits e.g. 12345
 void HLexer::process_digits( Token& token )
 {
-    // NOTE: Add your code here (instead of the provided c_next()).
+    token.text.push_back( c_);
     c_next();
+
+    while( !c_eoi() && digit( c_ )) {
+        token.text.push_back( c_);
+        c_next();
+    }
 }
 
 
 // Process integers and real numbers.
 void HLexer::process_number( Token& token )
 {
-    // NOTE: Add your code here (instead of the provided c_next()).
-    c_next();
+    // We process the first digits
+    process_digits(token);
+    // And say this is an integer
+    token.name = LNG::TN::t_integer;
+
+    // If a period follows...
+    if ( c_ == '.') {
+        // And the next is a digit
+        if ( digit(c_peek()) ) {
+            // it's a real
+            token.name = LNG::TN::t_real;
+            // which can have multiple digits after the period
+            process_digits(token);
+        } else {
+            // if we detected the period but there is no digit after it...
+            token.text.push_back(c_);
+            c_next();
+            // we don't know what it is
+            token.name = LNG::TN::t_unknown;
+            return;
+        }
+    }
+    // Then if we see an E or e
+    if ( c_ == 'E' || c_ == 'e') {
+        token.text.push_back( c_);
+        c_next();
+        // we can have an optional + or -
+        if ( c_ == '-' || c_ == '+') { token.text.push_back( c_); c_next(); }
+        // and after that we need a digit
+        if ( !digit( c_)) {
+            // otherwise it's not a valid number
+            token.name = LNG::TN::t_unknown;
+            return;
+        } else {
+            token.name = LNG::TN::t_real;
+            process_digits(token);
+        }
+    }
     //   Provided file test/test4.pas could help with the testing.
 }
 
