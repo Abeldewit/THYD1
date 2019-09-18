@@ -40,6 +40,7 @@ alpha [a-zA-Z]
 ".."		            { return LNG::TokenName::t_subrange; }
 ";"		                { return LNG::TokenName::t_semicolon; }
 
+
 [a-zA-Z_][a-zA-Z0-9_]*  { auto it = LNG::ReservedWordToTokenName.find( Common::to_lower( yytext ) );
                           if ( it != LNG::ReservedWordToTokenName.end() ) {
                               return it->second;
@@ -51,6 +52,10 @@ alpha [a-zA-Z]
 
 "'"[^']*$               { throw Lexer::LexerException(Common::Location{0, 0}, yytext ); }
 
+"."{digit}+.*			{ return LNG::TokenName::t_unknown;		}
+{digit}+("."{digit}+)(("e"|"E")("-"|"+")?{digit}+)?			{ return LNG::TokenName::t_real; }
+{digit}+("."{digit}+)?(("e"|"E")("-"|"+")?{digit}+)			{ return LNG::TokenName::t_real; }
+{digit}+				{ return LNG::TokenName::t_integer; }
 "{"(?:[^\}])*"}"		/*  {} style of a comment */
 "{"[^\}]*               { throw Lexer::LexerException(Common::Location{0, 0}, "non-ending {} comment!" ); }
 
