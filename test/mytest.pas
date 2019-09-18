@@ -2,10 +2,12 @@
 'if it is not, what should a compiler do then?'
 'well it throws an error'
 ' ok for hlexr :)'
+' ok for flexr :)'
 
 'now testing what the lexer will to with a string'
 'that spans multiple lines, which is illegal in TURBO pascal'
 ' ok for hlexr :)'
+' ok for flexr :)'
 
 {this is a regular well formed comment....}
 
@@ -13,7 +15,7 @@
 the same
 comment
 that spans
-muliple lines
+multiple lines
 }
 
 (* and this is * another type of the same comment....*)
@@ -25,7 +27,7 @@ hell yeaahhh *)
 
 here are somw words I want to grab between comments
 
-(* now testing a single star in the comment but newer properly ending it => should throw an exception *)
+(* now testing a single star * in the comment but newer properly ending it => should throw an exception *)
 (* ok for hlexr :) *)
 
 
@@ -44,7 +46,7 @@ Reals
 499E+45
 -45.43e-23
 
-'this should not be returned as an real be unknown add to the specs'
+'this should not be returned as an real'
 .45e2
 ' and not this '
 0.e3

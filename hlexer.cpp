@@ -142,10 +142,6 @@ void HLexer::process_number( Token& token )
         } else {
             // if we detected the period but there is no digit after it...
             // lets sey its is an int... because changes are that a range will follow
-            //token.text.push_back(c_);
-            //c_next();
-            // we don't know what it is
-            //token.name = LNG::TN::t_unknown;
             return;
         }
     }
@@ -165,7 +161,6 @@ void HLexer::process_number( Token& token )
             process_digits(token);
         }
     }
-    //   Provided file test/test4.pas could help with the testing.
 }
 
 
@@ -183,7 +178,7 @@ void HLexer::get( Token& token )
         possiblyWhitespece = remove_whitespaces();
         possiblyComments = remove_comment(token);
     }
-    
+
     // the location info. can not be read from the lexer class to the token
     // until after witespaces and comments have been processed
     token.loc = loc_;
