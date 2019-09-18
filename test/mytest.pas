@@ -21,9 +21,7 @@ now a star comment
 spanning many lines
 hell yeaahhh *)
 
-here are somw words I want to grab between comments
-
-(* now testing a single star in the comment but newer properly ending it => should throw an exception *)
+here are some words I want to grab between comments
 
 'integers of various formats'
 -1
